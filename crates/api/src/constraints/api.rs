@@ -53,8 +53,17 @@ pub struct ConstraintsHandle {
 
 impl ConstraintsHandle {
     pub fn send_constraints(&self, constraints: SignedConstraints) {
-        if self.constraints_tx.send(constraints).is_err() {
-            error!("Failed to send constraints to the constraints channel");
+        match self.constraints_tx.send(constraints.clone()) {
+            Ok(receiver_count) => {
+                if receiver_count == 0 {
+                    warn!("No active receivers for constraints channel");
+                } else {
+                    debug!("Sent constraints to {} receivers", receiver_count);
+                }
+            }
+            Err(broadcast::error::SendError(_)) => {
+                error!("Failed to send constraints: all receivers have been dropped");
+            }
         }
     }
 }
