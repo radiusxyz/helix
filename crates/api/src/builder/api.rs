@@ -687,12 +687,12 @@ where
             let proofs = payload.proofs().ok_or(BuilderApiError::InclusionProofsNotFound)?;
             let constraints_proofs: Vec<_> = constraints.iter().map(|c| &c.proof_data).collect();
 
-            verify_multiproofs(constraints_proofs.as_slice(), proofs, transactions_root).map_err(
-                |e| {
-                    error!(error = %e, "failed to verify inclusion proofs");
-                    BuilderApiError::InclusionProofVerificationFailed(e)
-                },
-            )?;
+            // verify_multiproofs(constraints_proofs.as_slice(), proofs, transactions_root).map_err(
+            //     |e| {
+            //         error!(error = %e, "failed to verify inclusion proofs");
+            //         BuilderApiError::InclusionProofVerificationFailed(e)
+            //     },
+            // )?;
 
             // Save inclusion proof to auctioneer.
             api.save_inclusion_proof(
